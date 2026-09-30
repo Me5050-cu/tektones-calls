@@ -152,7 +152,7 @@
       <div class="body">
         <div class="line">
           <span class="label">Opening</span>
-          <p>"Hi, my name's <b class="s-name">[name]</b>. I'm a student working on a project with a company called Tektones. Is the person who runs your kids ministry around?"</p>
+          <p>"Hi, my name's <b class="s-name">[name]</b>. I'm a student intern working with a company called Tektones. Is the person who runs your kids ministry around?"</p>
         </div>
         <div class="line">
           <span class="label">What it is</span>
@@ -168,13 +168,13 @@
         </div>
         <div class="line">
           <span class="label">Voicemail, 15 seconds</span>
-          <p>"Hi, this is <b class="s-name">[name]</b>. I'm a student working on a project with Tektones — we make Bible-story building sets. I've got a free Advent lesson I'd like to send your kids ministry, no strings. My number is <b class="s-num">[your number]</b>. I'll try again Thursday morning."</p>
+          <p>"Hi, this is <b class="s-name">[name]</b>. I'm a student intern with Tektones — we make Bible-story building sets. I've got a free Advent lesson I'd like to send your kids ministry, no strings. My number is <b class="s-num">[your number]</b>. I'll try again Thursday morning."</p>
         </div>
         <label class="mynum">Your number, for the voicemail line
           <input id="mynum" inputmode="tel" placeholder="512-555-0147" autocomplete="off">
         </label>
         <p class="tip">Write their number in the price box on the card, even if it's low. What churches say they'd pay is the whole point of this week.</p>
-        <p class="tip">If they ask: yes, it's a school project, and yes, it's a real company that pays on what sells. Say so. Never say "LEGO" — say building set.</p>
+        <p class="tip">If they ask whether you make anything on it: no. It's a school internship, you're not paid and you don't take a cut. Tektones is a real company that sells the sets. Don't call it a fundraiser or a donation, and never say "LEGO" — say building set.</p>
       </div>
     </details>
 
@@ -186,7 +186,7 @@
           <div><p class="q">"We don't bring in outside vendors."</p><p class="a">"Understood. Can I still send the free Advent lesson? No strings, use it or don't."</p></div>
           <div><p class="q">"There's no budget for that."</p><p class="a">"That's the good part — a lobby table costs the church nothing. Money goes the other direction, $10 a set back to your kids ministry."</p></div>
           <div><p class="q">"I'd have to ask the pastor."</p><p class="a">"Of course. Want me to send one page you can forward? I'll write it so you don't have to explain it."</p></div>
-          <div><p class="q">"Are you making money on this?"</p><p class="a">"Yes. It's a school project, but it's a real company and I earn on what I sell. Your kids ministry gets $10 a set too. I'd rather say that up front."</p></div>
+          <div><p class="q">"Are you making money on this?"</p><p class="a">"No. I'm a student intern — I don't get paid for this and I don't take a commission. Tektones is a real company and they do sell the sets, but for me this is a school project."</p></div>
           <div><p class="q">"We're in the middle of shoeboxes."</p><p class="a">"I know, collection week is the 16th through the 23rd. That's why I'm calling now instead of November."</p></div>
           <div><p class="q">"Can I see one first?"</p><p class="a">"Yes. I can drop a built one at the office this week and you can keep it in the kids wing through Advent."</p></div>
           <div><p class="q">"How much is it?"</p><p class="a">"Pricing goes live this week. What's the best number to text you the second it does?" Then actually text them.</p></div>
@@ -296,13 +296,13 @@
         '<a class="btn ghost" href="' + find + '" target="_blank" rel="noopener">Look up</a>' +
         '<button class="btn ghost say" type="button">What to say</button></div>' +
         '<div class="callscript" hidden>' +
-        '<p><b>Open</b>"Hi, my name\u2019s ' + esc(who || "[name]") + '. I\u2019m a student working on a project with a company called Tektones. Is ' +
+        '<p><b>Open</b>"Hi, my name\u2019s ' + esc(who || "[name]") + '. I\u2019m a student intern working with a company called Tektones. Is ' +
         esc(personTo(l)) + ' around?"</p>' +
         (l.s ? '<p class="hook"><b>Drop this in</b>' + esc(l.s) + '</p>' : "") +
         '<p><b>What it is</b>"We make building sets of Bible stories. The Nativity is 879 pieces, ten figures, and it comes with a devotional built to take a family through Advent a few pieces a night."</p>' +
         '<p><b>The two questions</b>"Is that something your kids ministry would be interested in this Christmas? And if you did want a few, what price per set could you actually work with?"</p>' +
         '<p><b>Close</b>"What\u2019s the best email for you? I\u2019ll send a photo and the details today."</p>' +
-        '<p><b>If no one picks up</b>"Hi, this is ' + esc(who || "[name]") + ', a student working with Tektones. We make Bible-story building sets and I\u2019ve got a free Advent lesson for your kids ministry, no strings. My number is ' + esc(myNumber() || "[your number]") + '. I\u2019ll try again Thursday."</p>' +
+        '<p><b>If no one picks up</b>"Hi, this is ' + esc(who || "[name]") + ', a student intern with Tektones. We make Bible-story building sets and I\u2019ve got a free Advent lesson for your kids ministry, no strings. My number is ' + esc(myNumber() || "[your number]") + '. I\u2019ll try again Thursday."</p>' +
         '</div>' +
         '<div class="track">' +
         '<select class="st" data-id="' + l.id + '">' + STATUSES.map(function (s) {
