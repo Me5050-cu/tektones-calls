@@ -133,7 +133,7 @@
 
     <div class="weekbar">
       <button class="arrow" id="prev" aria-label="Previous week">‹</button>
-      <div class="mid"><div class="wk" id="week-label"></div><div class="dates" id="week-dates"></div></div>
+      <div class="mid"><div class="wk" id="week-label"></div><div class="dates" id="week-dates"></div><div class="dates" id="week-focus"></div></div>
       <button class="arrow" id="next" aria-label="Next week">›</button>
     </div>
 
@@ -178,8 +178,8 @@
       </div>
       <div class="row">
         <button class="chip" data-pri="A" aria-pressed="true">A list</button>
-        <button class="chip" data-pri="B" aria-pressed="false">B</button>
-        <button class="chip" data-pri="C" aria-pressed="false">C</button>
+        <button class="chip" data-pri="B" aria-pressed="true">B</button>
+        <button class="chip" data-pri="C" aria-pressed="true">C</button>
         <button class="chip" id="hasphone" aria-pressed="false">Has a number</button>
         <span class="count" id="count"></span>
       </div>
@@ -199,6 +199,14 @@
     var PER_WEEK = PEOPLE.length * PER_PERSON;   // 25
     var WEEKS = Math.ceil(LEADS.length / PER_WEEK);
     var STATUSES = ["Not contacted", "Left message", "Talked", "Interested", "Sold", "Not now"];
+
+    // This week we're working non-denominational churches, A leads first.
+    // Independent Bible and community churches count as non-denominational.
+    var NONDENOM = /Non-denominational|Bible|Community|Interdenominational/;
+    var RANK = { A: 0, B: 1, C: 2 };
+    function byPri(a, b) { return RANK[a.pri] - RANK[b.pri]; }
+    var ROSTER = LEADS.filter(function (l) { return NONDENOM.test(l.d); }).sort(byPri)
+      .concat(LEADS.filter(function (l) { return !NONDENOM.test(l.d); }).sort(byPri));
 
     var store = {}, who = null, week = 0;
     try { store = JSON.parse(localStorage.getItem("tek-calls") || "{}") || {}; } catch (e) { store = {}; }
@@ -220,7 +228,7 @@
       var p = PEOPLE.indexOf(person), out = [];
       for (var k = 0; k < PER_PERSON; k++) {
         var i = w * PER_WEEK + p + k * PEOPLE.length;
-        if (LEADS[i]) out.push(LEADS[i]);
+        if (ROSTER[i]) out.push(ROSTER[i]);
       }
       return out;
     }
@@ -263,6 +271,12 @@
       document.getElementById("s-name").textContent = who;
       document.getElementById("week-label").textContent = "Week " + (week + 1) + " of " + WEEKS;
       document.getElementById("week-dates").textContent = weekDates(week);
+      var pool = [], fw;
+      for (var q = 0; q < PER_WEEK; q++) { fw = ROSTER[week * PER_WEEK + q]; if (fw) pool.push(fw); }
+      var allNd = pool.length && pool.every(function (l) { return NONDENOM.test(l.d); });
+      var aCount = pool.filter(function (l) { return l.pri === "A"; }).length;
+      document.getElementById("week-focus").textContent =
+        (allNd ? "Non-denominational churches" : "Mixed denominations") + (aCount ? " · " + aCount + " A leads" : "");
       document.getElementById("prev").disabled = week <= 0;
       document.getElementById("next").disabled = week >= WEEKS - 1;
       var mine = slice(who, week), list = document.getElementById("week-list");
@@ -288,7 +302,7 @@
       }
     }
 
-    var pris = { A: true, B: false, C: false }, phoneOnly = false;
+    var pris = { A: true, B: true, C: true }, phoneOnly = false;
     function renderAll() {
       var text = document.getElementById("q").value.trim().toLowerCase();
       var city = document.getElementById("city").value;
