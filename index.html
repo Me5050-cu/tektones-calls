@@ -108,6 +108,16 @@
   .money input { width: 5.4em; text-transform: none; letter-spacing: 0; }
   .note { flex: 1 1 100%; font: 400 0.9rem var(--body); color: var(--ink); background: var(--ground); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 9px; resize: vertical; min-height: 38px; }
   .stamp { font-family: var(--mono); font-size: 0.7rem; color: var(--star-ink); }
+  .callscript { border-top: 1px dashed var(--rule); padding-top: 9px; display: grid; gap: 7px; }
+  .callscript p { margin: 0; font-size: 0.94rem; line-height: 1.45; }
+  .callscript b { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--star-ink); display: block; }
+  .callscript .hook { background: var(--panel); border-radius: 8px; padding: 8px 10px; }
+  .objections { display: grid; gap: 7px; }
+  .objections > div { background: var(--surface); border-radius: 9px; padding: 9px 11px; }
+  .objections .q { font-weight: 800; font-size: 0.92rem; margin: 0 0 3px; }
+  .objections .a { margin: 0; font-size: 0.93rem; }
+  .mynum { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+  .mynum input { font: 600 0.9rem var(--body); color: var(--ink); background: var(--ground); border: 1px solid var(--rule); border-radius: 8px; padding: 7px 9px; width: 9em; text-transform: none; letter-spacing: 0; }
   .empty { text-align: center; color: var(--ink-2); padding: 34px 0; }
   footer { margin-top: 26px; color: var(--ink-2); font-size: 0.85rem; }
   .done-banner { background: var(--panel); border-radius: 12px; padding: 14px; text-align: center; font-weight: 700; }
@@ -142,7 +152,7 @@
       <div class="body">
         <div class="line">
           <span class="label">Opening</span>
-          <p>"Hi, my name's <b id="s-name">[name]</b>. I'm a student working on a project with a company called Tektones. Is the person who runs your kids ministry around?"</p>
+          <p>"Hi, my name's <b class="s-name">[name]</b>. I'm a student working on a project with a company called Tektones. Is the person who runs your kids ministry around?"</p>
         </div>
         <div class="line">
           <span class="label">What it is</span>
@@ -156,8 +166,31 @@
           <span class="label">Close</span>
           <p>"That helps a lot, thank you. What's the best email for you? I'll send a photo and the details today, and I'll follow up next week once I have the final pricing."</p>
         </div>
+        <div class="line">
+          <span class="label">Voicemail, 15 seconds</span>
+          <p>"Hi, this is <b class="s-name">[name]</b>. I'm a student working on a project with Tektones — we make Bible-story building sets. I've got a free Advent lesson I'd like to send your kids ministry, no strings. My number is <b class="s-num">[your number]</b>. I'll try again Thursday morning."</p>
+        </div>
+        <label class="mynum">Your number, for the voicemail line
+          <input id="mynum" inputmode="tel" placeholder="512-555-0147" autocomplete="off">
+        </label>
         <p class="tip">Write their number in the price box on the card, even if it's low. What churches say they'd pay is the whole point of this week.</p>
         <p class="tip">If they ask: yes, it's a school project, and yes, it's a real company that pays on what sells. Say so. Never say "LEGO" — say building set.</p>
+      </div>
+    </details>
+
+    <details class="script" id="objections">
+      <summary>If they push back</summary>
+      <div class="body">
+        <div class="objections">
+          <div><p class="q">"Just email me."</p><p class="a">"Happy to, I'll send it today. Can I call you back Tuesday once you've had a look?" Email is the receipt, never the pitch.</p></div>
+          <div><p class="q">"We don't bring in outside vendors."</p><p class="a">"Understood. Can I still send the free Advent lesson? No strings, use it or don't."</p></div>
+          <div><p class="q">"There's no budget for that."</p><p class="a">"That's the good part — a lobby table costs the church nothing. Money goes the other direction, $10 a set back to your kids ministry."</p></div>
+          <div><p class="q">"I'd have to ask the pastor."</p><p class="a">"Of course. Want me to send one page you can forward? I'll write it so you don't have to explain it."</p></div>
+          <div><p class="q">"Are you making money on this?"</p><p class="a">"Yes. It's a school project, but it's a real company and I earn on what I sell. Your kids ministry gets $10 a set too. I'd rather say that up front."</p></div>
+          <div><p class="q">"We're in the middle of shoeboxes."</p><p class="a">"I know, collection week is the 16th through the 23rd. That's why I'm calling now instead of November."</p></div>
+          <div><p class="q">"Can I see one first?"</p><p class="a">"Yes. I can drop a built one at the office this week and you can keep it in the kids wing through Advent."</p></div>
+          <div><p class="q">"How much is it?"</p><p class="a">"Pricing goes live this week. What's the best number to text you the second it does?" Then actually text them.</p></div>
+        </div>
       </div>
     </details>
 
@@ -208,7 +241,7 @@
     var ROSTER = LEADS.filter(function (l) { return NONDENOM.test(l.d); }).sort(byPri)
       .concat(LEADS.filter(function (l) { return !NONDENOM.test(l.d); }).sort(byPri));
 
-    var store = {}, who = null, week = 0;
+    var store = {}, who = null, week = 0, numTimer = null;
     try { store = JSON.parse(localStorage.getItem("tek-calls") || "{}") || {}; } catch (e) { store = {}; }
     try { who = localStorage.getItem("tek-who"); } catch (e) {}
     if (PEOPLE.indexOf(who) < 0) who = null;
@@ -232,6 +265,12 @@
       }
       return out;
     }
+    function myNumber() { try { return localStorage.getItem("tek-mynum") || ""; } catch (e) { return ""; } }
+    function personTo(l) {
+      var w = l.who || "";
+      if (!w || /^(Ask|Verify)/.test(w) || w.indexOf(",") > -1) return "the person who runs your kids ministry";
+      return w;
+    }
     function esc(s) { return (s || "").replace(/[&<>"]/g, function (m) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[m]; }); }
     function stamp() { return new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }); }
 
@@ -254,7 +293,17 @@
              : '<a class="btn" href="' + find + '" target="_blank" rel="noopener">Find the number</a>') +
         (l.e ? '<a class="btn" href="mailto:' + esc(l.e) + '">Email</a>' : "") +
         '<a class="btn ghost" href="' + maps + '" target="_blank" rel="noopener">Map</a>' +
-        '<a class="btn ghost" href="' + find + '" target="_blank" rel="noopener">Look up</a></div>' +
+        '<a class="btn ghost" href="' + find + '" target="_blank" rel="noopener">Look up</a>' +
+        '<button class="btn ghost say" type="button">What to say</button></div>' +
+        '<div class="callscript" hidden>' +
+        '<p><b>Open</b>"Hi, my name\u2019s ' + esc(who || "[name]") + '. I\u2019m a student working on a project with a company called Tektones. Is ' +
+        esc(personTo(l)) + ' around?"</p>' +
+        (l.s ? '<p class="hook"><b>Drop this in</b>' + esc(l.s) + '</p>' : "") +
+        '<p><b>What it is</b>"We make building sets of Bible stories. The Nativity is 879 pieces, ten figures, and it comes with a devotional built to take a family through Advent a few pieces a night."</p>' +
+        '<p><b>The two questions</b>"Is that something your kids ministry would be interested in this Christmas? And if you did want a few, what price per set could you actually work with?"</p>' +
+        '<p><b>Close</b>"What\u2019s the best email for you? I\u2019ll send a photo and the details today."</p>' +
+        '<p><b>If no one picks up</b>"Hi, this is ' + esc(who || "[name]") + ', a student working with Tektones. We make Bible-story building sets and I\u2019ve got a free Advent lesson for your kids ministry, no strings. My number is ' + esc(myNumber() || "[your number]") + '. I\u2019ll try again Thursday."</p>' +
+        '</div>' +
         '<div class="track">' +
         '<select class="st" data-id="' + l.id + '">' + STATUSES.map(function (s) {
           return '<option' + ((st.status || "Not contacted") === s ? " selected" : "") + ">" + s + "</option>";
@@ -268,7 +317,11 @@
 
     function renderWeek() {
       document.getElementById("who-name").textContent = who;
-      document.getElementById("s-name").textContent = who;
+      [].forEach.call(document.querySelectorAll(".s-name"), function (e) { e.textContent = who; });
+      var mn = (function () { try { return localStorage.getItem("tek-mynum") || ""; } catch (e) { return ""; } })();
+      [].forEach.call(document.querySelectorAll(".s-num"), function (e) { e.textContent = mn || "[your number]"; });
+      var mi = document.getElementById("mynum");
+      if (mi && document.activeElement !== mi) mi.value = mn;
       document.getElementById("week-label").textContent = "Week " + (week + 1) + " of " + WEEKS;
       document.getElementById("week-dates").textContent = weekDates(week);
       var pool = [], fw;
@@ -400,6 +453,12 @@
       renderAll();
     });
 
+    document.addEventListener("click", function (e) {
+      if (!e.target.classList || !e.target.classList.contains("say")) return;
+      var panel = e.target.closest(".card").querySelector(".callscript");
+      panel.hidden = !panel.hidden;
+      e.target.textContent = panel.hidden ? "What to say" : "Hide script";
+    });
     document.addEventListener("change", function (e) {
       var t = e.target, id = t.getAttribute && t.getAttribute("data-id");
       if (!id) return;
@@ -418,6 +477,18 @@
     });
     document.addEventListener("input", function (e) {
       var t = e.target;
+      if (t.id === "mynum") {
+        try { localStorage.setItem("tek-mynum", t.value); } catch (err) {}
+        [].forEach.call(document.querySelectorAll(".s-num"), function (el) { el.textContent = t.value || "[your number]"; });
+        clearTimeout(numTimer);
+        numTimer = setTimeout(function () {   // refresh the voicemail line inside the cards
+          if (!document.getElementById("view-week").hidden) renderWeek();
+          else if (!document.getElementById("view-all").hidden) renderAll();
+          var again = document.getElementById("mynum");
+          if (again) again.focus();
+        }, 900);
+        return;
+      }
       if (!t.classList || !(t.classList.contains("note") || t.classList.contains("pr"))) return;
       var id = t.getAttribute("data-id");
       if (!id) return;
